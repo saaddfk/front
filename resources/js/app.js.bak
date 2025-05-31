@@ -1,6 +1,4 @@
-class SiteManager {
-    constructor() {
-        // Mark first visible images as LCP candidates
+// Mark first visible images as LCP candidates
         const firstImages = document.querySelectorAll('.grid img:first-child, .hero img');
         firstImages.forEach((img, index) => {
             if (index === 0) {
@@ -8,12 +6,6 @@ class SiteManager {
                 img.fetchPriority = 'high';
             }
         });
-
-        // Call other init methods if they were intended to be part of constructor initialization
-        // For now, keeping original structure where init methods are called after instantiation.
-        // Example: this.initLazyLoading();
-        // this.initAnimations();
-        // ... etc.
     }
 
     handleImageErrors() {
@@ -35,9 +27,7 @@ class SiteManager {
                 <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
             </svg>
         `;
-        if (img.parentNode) { // Check if parentNode exists
-            img.parentNode.insertBefore(fallback, img);
-        }
+        img.parentNode.insertBefore(fallback, img);
     }
 
     initProgressiveImageLoading() {
@@ -271,12 +261,12 @@ class SiteManager {
     }
 
     fallbackLazyLoading() {
-        const imageObserver = new IntersectionObserver((entries, observer) => { // Added observer
+        const imageObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     const img = entry.target;
                     this.loadImage(img);
-                    observer.unobserve(img); // Use the passed observer
+                    imageObserver.unobserve(img);
                 }
             });
         }, {
@@ -284,10 +274,8 @@ class SiteManager {
         });
 
         document.querySelectorAll('img[loading="lazy"]').forEach(img => {
-            if(img.src) { // Check if src exists before assigning to data-src
-                img.dataset.src = img.src;
-                img.src = this.generatePlaceholder(img); // Set placeholder after data-src is set
-            }
+            img.dataset.src = img.src;
+            img.src = this.generatePlaceholder(img);
             imageObserver.observe(img);
         });
     }
@@ -304,8 +292,8 @@ class SiteManager {
         canvas.height = 10;
 
         const gradient = ctx.createLinearGradient(0, 0, 10, 10);
-        gradient.addColorStop(0, '#f3f4f6'); // Tailwind gray-100
-        gradient.addColorStop(1, '#e5e7eb'); // Tailwind gray-200
+        gradient.addColorStop(0, '#f3f4f6');
+        gradient.addColorStop(1, '#e5e7eb');
 
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, 10, 10);
@@ -315,12 +303,12 @@ class SiteManager {
 
     initContentLazyLoading() {
         // Lazy load heavy content sections
-        const contentObserver = new IntersectionObserver((entries, observer) => { // Added observer
+        const contentObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     const element = entry.target;
                     this.loadHeavyContent(element);
-                    observer.unobserve(element); // Use the passed observer
+                    contentObserver.unobserve(element);
                 }
             });
         });
@@ -335,13 +323,13 @@ class SiteManager {
 
         switch(contentType) {
             case 'comments':
-                // this.loadComments(element); // Assuming these methods exist or will be created
+                this.loadComments(element);
                 break;
             case 'related-posts':
-                // this.loadRelatedPosts(element);
+                this.loadRelatedPosts(element);
                 break;
             case 'ads':
-                // this.loadAds(element);
+                this.loadAds(element);
                 break;
         }
     }
@@ -356,17 +344,17 @@ class SiteManager {
     }
 
     initScrollAnimations() {
-        const animationObserver = new IntersectionObserver((entries, observer) => { // Added observer
+        const animationObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     const element = entry.target;
                     const delay = parseInt(element.dataset.aosDelay) || 0;
 
                     setTimeout(() => {
-                        element.classList.add('animate-fade-in-up'); // Make sure this class is defined in CSS
+                        element.classList.add('animate-fade-in-up');
                     }, delay);
 
-                    observer.unobserve(element); // Use the passed observer
+                    animationObserver.unobserve(element);
                 }
             });
         }, {
@@ -374,7 +362,7 @@ class SiteManager {
         });
 
         document.querySelectorAll('[data-aos]').forEach(el => {
-            el.classList.add('opacity-0', 'translate-y-4'); // Initial state for animation
+            el.classList.add('opacity-0', 'translate-y-4');
             animationObserver.observe(el);
         });
     }
@@ -396,13 +384,13 @@ class SiteManager {
     initLoadingAnimations() {
         // Page load animation
         window.addEventListener('load', () => {
-            document.body.classList.add('loaded'); // Make sure .loaded class has meaning in CSS
+            document.body.classList.add('loaded');
 
             // Stagger animation for grid items
             const gridItems = document.querySelectorAll('.grid > *');
             gridItems.forEach((item, index) => {
                 setTimeout(() => {
-                    item.classList.add('animate-fade-in'); // Make sure this class is defined
+                    item.classList.add('animate-fade-in');
                 }, index * 100);
             });
         });
@@ -423,7 +411,7 @@ class SiteManager {
 
         const handleScroll = () => {
             if (!ticking) {
-                window.requestAnimationFrame(() => { // Use window.requestAnimationFrame
+                requestAnimationFrame(() => {
                     this.updateScrollPosition();
                     ticking = false;
                 });
@@ -458,15 +446,15 @@ class SiteManager {
     preloadResources() {
         // Preload critical resources
         const criticalResources = [
-            // '/css/tailwind.css', // This is likely already handled by Vite
-            // 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lexend:wght@400;500;600;700&display=swap' // Also likely handled by <link> tags in layout
+            '/css/tailwind.css',
+            'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lexend:wght@400;500;600;700&display=swap'
         ];
 
         criticalResources.forEach(resource => {
             const link = document.createElement('link');
             link.rel = 'preload';
             link.href = resource;
-            link.as = resource.includes('.css') ? 'style' : 'script'; // Simple check, might need refinement
+            link.as = resource.includes('.css') ? 'style' : 'script';
             document.head.appendChild(link);
         });
     }
@@ -488,7 +476,7 @@ class SiteManager {
     cacheStrategies() {
         // Implement service worker for caching
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js') // Ensure sw.js exists and is correctly configured
+            navigator.serviceWorker.register('/sw.js')
                 .then(registration => {
                     console.log('SW registered: ', registration);
                 })
@@ -513,13 +501,10 @@ class SiteManager {
         if (skipLink) {
             skipLink.addEventListener('click', (e) => {
                 e.preventDefault();
-                const targetSelector = skipLink.getAttribute('href'); // Get selector from href
-                if (targetSelector) {
-                    const target = document.querySelector(targetSelector);
-                    if (target) {
-                        target.focus();
-                        target.scrollIntoView(); // Optional: scroll into view
-                    }
+                const target = document.querySelector(skipLink.getAttribute('href'));
+                if (target) {
+                    target.focus();
+                    target.scrollIntoView();
                 }
             });
         }
@@ -538,23 +523,21 @@ class SiteManager {
 
     improveScreenReaderExperience() {
         // Announce dynamic content changes
-        let announcer = document.getElementById('sr-announcer');
-        if (!announcer) {
-            announcer = document.createElement('div');
-            announcer.setAttribute('id', 'sr-announcer');
-            announcer.setAttribute('aria-live', 'polite');
-            announcer.setAttribute('aria-atomic', 'true');
-            announcer.className = 'sr-only'; // Tailwind's screen-reader only class
-            document.body.appendChild(announcer);
-        }
+        const announcer = document.createElement('div');
+        announcer.setAttribute('aria-live', 'polite');
+        announcer.setAttribute('aria-atomic', 'true');
+        announcer.className = 'sr-only';
+        document.body.appendChild(announcer);
+
         this.announcer = announcer;
     }
 
     announce(message) {
         if (this.announcer) {
-            this.announcer.textContent = ''; // Clear previous message
-            this.announcer.textContent = message; // Set new message
-            // No timeout needed if aria-atomic="true" is used correctly, screen reader should announce change.
+            this.announcer.textContent = message;
+            setTimeout(() => {
+                this.announcer.textContent = '';
+            }, 1000);
         }
     }
 
@@ -562,9 +545,9 @@ class SiteManager {
         // Manage focus for modal dialogs
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
-                const modal = document.querySelector('.modal:not([hidden])'); // Assuming .modal is used and hidden attribute toggles visibility
+                const modal = document.querySelector('.modal:not([hidden])');
                 if (modal) {
-                    // this.closeModal(modal); // Assuming a closeModal method exists that handles focus restoration
+                    this.closeModal(modal);
                 }
             }
         });
@@ -583,9 +566,9 @@ class SiteManager {
         // Generic event tracking
         if (typeof gtag !== 'undefined') {
             gtag('event', action, {
-                'event_category': category, // Use underscore for gtag.js standard params
-                'event_label': label,
-                'value': value
+                event_category: category,
+                event_label: label,
+                value: value
             });
         }
 
@@ -601,26 +584,25 @@ class SiteManager {
         document.addEventListener('click', (e) => {
             const target = e.target.closest('a, button');
             if (target) {
-                const label = target.textContent ? target.textContent.trim() : (target.getAttribute('aria-label') || target.id || target.className);
+                const label = target.textContent.trim() || target.getAttribute('aria-label') || target.className;
                 this.trackEvent('interaction', 'click', label);
             }
         });
 
         // Track scroll depth
         let maxScroll = 0;
-        const handleScrollDepth = () => { // Debounce or throttle this if it becomes performance intensive
+        window.addEventListener('scroll', () => {
             const scrollPercent = Math.round((window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100);
-            if (scrollPercent > maxScroll && scrollPercent % 25 === 0 && scrollPercent <= 100) { // Ensure not over 100
+            if (scrollPercent > maxScroll && scrollPercent % 25 === 0) {
                 maxScroll = scrollPercent;
                 this.trackEvent('engagement', 'scroll', `${scrollPercent}%`);
             }
-        };
-        window.addEventListener('scroll', handleScrollDepth, { passive: true });
+        });
     }
 
     trackPerformanceMetrics() {
         // Track Core Web Vitals
-        if ('webVitals' in window && typeof window.webVitals.getCLS === 'function') { // Check for webVitals object and functions
+        if ('web-vitals' in window) {
             const { getCLS, getFID, getFCP, getLCP, getTTFB } = window.webVitals;
 
             getCLS(metric => this.trackEvent('performance', 'CLS', '', metric.value));
@@ -637,10 +619,9 @@ class SiteManager {
     debounce(func, wait) {
         let timeout;
         return function executedFunction(...args) {
-            const context = this; // Capture context
             const later = () => {
                 clearTimeout(timeout);
-                func.apply(context, args); // Apply with captured context and arguments
+                func(...args);
             };
             clearTimeout(timeout);
             timeout = setTimeout(later, wait);
@@ -649,10 +630,11 @@ class SiteManager {
 
     throttle(func, limit) {
         let inThrottle;
-        return function executedFunction(...args) { // Use executedFunction for clarity
-            const context = this; // Capture context
+        return function() {
+            const args = arguments;
+            const context = this;
             if (!inThrottle) {
-                func.apply(context, args); // Apply with captured context and arguments
+                func.apply(context, args);
                 inThrottle = true;
                 setTimeout(() => inThrottle = false, limit);
             }
@@ -664,41 +646,12 @@ class SiteManager {
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
         window.siteManager = new SiteManager();
-        // It's better to call init methods on the instance if they are not part of constructor
-        if (window.siteManager) {
-            window.siteManager.handleImageErrors();
-            window.siteManager.initProgressiveImageLoading();
-            window.siteManager.initProductGallery();
-            window.siteManager.initDownloadCountdown();
-            window.siteManager.initLazyLoading(); // This was one of the original separate scripts
-            window.siteManager.initAnimations();
-            window.siteManager.initPerformanceOptimizations();
-            window.siteManager.initAccessibility();
-            window.siteManager.initAnalytics();
-        }
     });
 } else {
     window.siteManager = new SiteManager();
-    // Also call init methods here for the 'else' case
-    if (window.siteManager) {
-        window.siteManager.handleImageErrors();
-        window.siteManager.initProgressiveImageLoading();
-        window.siteManager.initProductGallery();
-        window.siteManager.initDownloadCountdown();
-        window.siteManager.initLazyLoading();
-        window.siteManager.initAnimations();
-        window.siteManager.initPerformanceOptimizations();
-        window.siteManager.initAccessibility();
-        window.siteManager.initAnalytics();
-    }
 }
 
 // Lazy Loading Script (from home.antlers.html)
-// This functionality is now expected to be covered by SiteManager.initLazyLoading()
-// and the specific IntersectionObserver logic within the new SiteManager.fallbackLazyLoading()
-// or SiteManager.enhanceNativeLazyLoading().
-// The original separate script block for this can be removed if initLazyLoading() is comprehensive.
-// For now, I will keep it as per previous steps, but ideally it should be integrated.
 document.addEventListener('DOMContentLoaded', function() {
     // Enhanced lazy loading with intersection observer
     if ('loading' in HTMLImageElement.prototype) {
@@ -712,26 +665,31 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     } else {
         // Fallback for browsers that do not support native lazy loading
-        const observer = new IntersectionObserver((entries, observer) => {
+        const observer = new IntersectionObserver((entries, observer) => { // Added observer to args
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     const img = entry.target;
+                    // Check for data-src attribute before setting src
                     if (img.dataset.src) {
                         img.src = img.dataset.src;
                     }
                     img.classList.add('animate-fade-in');
-                    img.removeAttribute('data-src');
+                    img.removeAttribute('data-src'); // Clean up
                     observer.unobserve(img);
                 }
             });
         });
 
         document.querySelectorAll('img[loading="lazy"]').forEach(img => {
+            // Ensure data-src is set if src is present
             if (img.src && !img.dataset.src) {
                  img.dataset.src = img.src;
             }
+            // If src is not set via data-src, and native lazy isn't supported, it might not load.
+            // Consider a placeholder or ensuring data-src is always populated.
+            // For now, we'll only clear src if data-src is confirmed.
             if (img.dataset.src) {
-                img.src = '';
+                img.src = ''; // Clear src to ensure lazy loading by observer
             }
             observer.observe(img);
         });
@@ -739,20 +697,17 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // LCP Image Preloading & Theme Toggle Script (from layout.antlers.html)
-// LCP part could be handled by SiteManager constructor's LCP candidate marking.
-// Theme toggle part could be a method in SiteManager.
 document.addEventListener('DOMContentLoaded', () => {
-    // LCP Image Preloading (initial LCP images are handled by SiteManager constructor)
-    // This might be for other specific LCP targets if any.
-    const lcpImage = document.querySelector('img[loading="eager"], .lcp-target img');
+    // LCP Image Preloading
+    const lcpImage = document.querySelector('img[loading="eager"], .lcp-target img'); // Modified selector for LCP
 
     if (lcpImage && !lcpImage.complete) {
         const tempImg = new Image();
         tempImg.src = lcpImage.src;
-        if (lcpImage.srcset) {
+        if (lcpImage.srcset) { // Check if srcset exists
             tempImg.srcset = lcpImage.srcset;
         }
-        if (lcpImage.sizes) {
+        if (lcpImage.sizes) { // Check if sizes exists
             tempImg.sizes = lcpImage.sizes;
         }
     }

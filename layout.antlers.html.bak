@@ -78,5 +78,33 @@
     {{ partial:footer }}
     {{ partial:extras }}
 
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const lcpImage = document.querySelector('.lcp-target img');
+
+        if (lcpImage && !lcpImage.complete) {
+            const tempImg = new Image();
+            tempImg.src = lcpImage.src;
+            tempImg.srcset = lcpImage.srcset;
+            tempImg.sizes = lcpImage.sizes;
+        }
+
+        // Theme toggle functionality
+        const themeToggle = document.querySelector('#theme-toggle');
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                // Toggle dark mode
+                document.documentElement.classList.toggle('dark');
+
+                // Update localStorage
+                if (document.documentElement.classList.contains('dark')) {
+                    localStorage.theme = 'dark';
+                } else {
+                    localStorage.theme = 'light';
+                }
+            });
+        }
+    });
+    </script>
 </body>
 </html>
