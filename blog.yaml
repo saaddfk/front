@@ -1,0 +1,450 @@
+title: Blog
+tabs:
+  main:
+    display: Main
+    sections:
+      -
+        fields:
+          -
+            handle: title
+            field:
+              type: text
+              required: true
+              validate:
+                - required
+          -
+            handle: main_content
+            field:
+              type: bard
+              display: Content
+              buttons:
+                - h2
+                - h3
+                - bold
+                - italic
+                - unorderedlist
+                - orderedlist
+                - removeformat
+                - quote
+                - anchor
+                - image
+                - table
+                - strikethrough
+                - code
+                - codeblock
+                - small
+                - superscript
+                - subscript
+                - alignleft
+                - aligncenter
+                - alignright
+                - alignjustify
+              container: assets
+              reading_time: true
+              remove_empty_nodes: false
+              sets:
+                main:
+                  display: Main
+                  sets:
+                    code_block:
+                      display: 'Code Block'
+                      fields:
+                        -
+                          handle: code
+                          field:
+                            mode: php
+                            type: code
+                            display: Code
+          -
+            handle: hero_image
+            field:
+              mode: grid
+              container: assets
+              restrict: true
+              max_files: 1
+              type: assets
+              display: 'Hero Image'
+          -
+            handle: download_section
+            field:
+              type: section
+              display: 'Download Configuration'
+          -
+            handle: show_download_button
+            field:
+              type: toggle
+              display: 'Show Download Button'
+              instructions: 'Enable this for downloadable content'
+          -
+            handle: download_details
+            field:
+              type: grid
+              max_rows: 1
+              display: 'Download Details'
+              instructions: 'Configure file details for the download'
+              if:
+                show_download_button: true
+              fields:
+                -
+                  handle: filename
+                  field:
+                    type: text
+                    display: 'File Name'
+                    default: app.zip
+                -
+                  handle: file_type
+                  field:
+                    type: text
+                    display: 'File Type'
+                    default: zip
+                -
+                  handle: file_size
+                  field:
+                    type: text
+                    display: 'File Size'
+                    default: '0 MB'
+                -
+                  handle: version
+                  field:
+                    type: text
+                    display: Version
+                -
+                  handle: operating_system
+                  field:
+                    type: select
+                    display: 'Operating System'
+                    options:
+                      Windows: Windows
+                      macOS: macOS
+                      Linux: Linux
+                      Android: Android
+                      iOS: iOS
+                      All: 'All Platforms'
+                -
+                  handle: requirements
+                  field:
+                    type: textarea
+                    display: 'System Requirements'
+                -
+                  handle: category
+                  field:
+                    type: text
+                    display: Category
+          -
+            handle: download_image
+            field:
+              type: assets
+              container: images
+              max_files: 1
+              display: 'Download Preview Image'
+              if:
+                show_download_button: true
+          -
+            handle: countdown_time
+            field:
+              type: integer
+              display: 'Countdown Time'
+              instructions: 'Time in seconds before download starts'
+              default: 10
+              if:
+                show_download_button: true
+          -
+            handle: download_url
+            field:
+              type: text
+              display: 'Download URL'
+              instructions: 'Enter the download URL'
+              if:
+                show_download_button: true
+          -
+            handle: toggle_field
+            field:
+              type: toggle
+              display: 'Toggle Field'
+      -
+        display: 'Multi-Tool Product'
+        fields:
+          -
+            handle: product_name
+            field:
+              type: text
+              display: 'Product Name'
+          -
+            handle: product_description
+            field:
+              type: textarea
+              display: 'Product Description'
+              instructions: 'Detailed description of the multi-tool product'
+          -
+            handle: product_images
+            field:
+              container: assets
+              type: assets
+              display: 'Product Images'
+          -
+            handle: product_features
+            field:
+              type: array
+              display: 'Product Features'
+              instructions: 'List out key features of the multi-tool'
+          -
+            handle: feature
+            field:
+              type: text
+              display: Features
+          -
+            handle: purchase_link
+            field:
+              type: link
+              display: 'Purchase Link'
+              instructions: 'URL to purchase the product (e.g., Amazon)'
+          -
+            handle: price
+            field:
+              type: integer
+              display: Price
+  seo:
+    display: SEO
+    sections:
+      -
+        fields:
+          -
+            handle: focus_keywords
+            field:
+              type: navs
+              display: 'Focus Keywords'
+              instructions: 'Add main keywords for SEO (max 5 keywords)'
+              max_items: 5
+          -
+            handle: meta_title
+            field:
+              type: text
+              display: 'Meta Title'
+              instructions: 'Add a descriptive title for SEO'
+              validate:
+                - required
+          -
+            handle: meta_description
+            field:
+              type: textarea
+              character_limit: 160
+              display: 'Meta Description'
+              instructions: 'Write a description between 150-160 characters'
+              validate:
+                - required
+          -
+            handle: canonical_url
+            field:
+              type: text
+              display: 'Canonical URL'
+          -
+            handle: og_image
+            field:
+              type: assets
+              container: assets
+              max_files: 1
+              display: 'Social Share Image'
+              instructions: 'Image for social media sharing'
+          -
+            handle: schema_section
+            field:
+              type: section
+              display: 'Schema Configuration'
+          -
+            handle: active_schemas
+            field:
+              type: checkboxes
+              display: 'Schema Type'
+              instructions: 'Select which schema types to enable'
+              options:
+                NewsArticle: 'News Article'
+                Article: Article
+                BlogPosting: 'Blog Post'
+                SoftwareApplication: 'Software Application'
+                FAQPage: 'FAQ Page'
+              default:
+                - Article
+          -
+            handle: article_details
+            field:
+              type: grid
+              display: 'Article Details'
+              instructions: 'Configure article schema details'
+              if:
+                active_schemas: 'contains Article, NewsArticle'
+              fields:
+                -
+                  handle: article_section
+                  field:
+                    type: select
+                    display: 'Article Section'
+                    options:
+                      news: News
+                      technology: Technology
+                      business: Business
+                      entertainment: Entertainment
+                      sports: Sports
+                      science: Science
+                      health: Health
+                -
+                  handle: article_type
+                  field:
+                    type: select
+                    display: 'Article Type'
+                    options:
+                      NewsArticle: 'News Article'
+                      TechArticle: 'Technical Article'
+                      ReviewArticle: 'Review Article'
+                      ReportageNewsArticle: Reportage
+                      AnalysisNewsArticle: Analysis
+                -
+                  handle: is_accessible_for_free
+                  field:
+                    type: toggle
+                    display: 'Free Access'
+                    default: true
+                -
+                  handle: word_count
+                  field:
+                    type: integer
+                    display: 'Word Count'
+                    read_only: true
+          -
+            handle: software_details
+            field:
+              type: grid
+              display: 'Software Details'
+              instructions: 'Configure software application schema details'
+              if:
+                active_schemas: 'contains SoftwareApplication'
+              fields:
+                -
+                  handle: app_category
+                  field:
+                    type: select
+                    display: 'Application Category'
+                    options:
+                      GameApplication: Game
+                      BusinessApplication: Business
+                      DesktopApplication: Desktop
+                      MobileApplication: Mobile
+                      WebApplication: Web
+                      UtilityApplication: Utility
+                -
+                  handle: price
+                  field:
+                    type: text
+                    display: Price
+                    default: '0.00'
+                -
+                  handle: currency
+                  field:
+                    type: select
+                    display: Currency
+                    options:
+                      USD: USD
+                      EUR: EUR
+                      GBP: GBP
+                    default: USD
+                -
+                  handle: rating
+                  field:
+                    type: integer
+                    display: Rating
+                    min: 0
+                    max: 5
+                    default: 0
+                -
+                  handle: rating_count
+                  field:
+                    type: integer
+                    display: 'Number of Ratings'
+                    default: 0
+          -
+            handle: faq_items
+            field:
+              type: grid
+              display: 'FAQ Items'
+              instructions: 'Add FAQ questions and answers'
+              if:
+                active_schemas: 'contains FAQPage'
+              fields:
+                -
+                  handle: question
+                  field:
+                    type: text
+                    display: Question
+                -
+                  handle: answer
+                  field:
+                    type: textarea
+                    display: Answer
+  sidebar:
+    display: Sidebar
+    sections:
+      -
+        fields:
+          -
+            handle: slug
+            field:
+              type: slug
+              localizable: true
+              validate:
+                - required
+                - 'new \Statamic\Rules\UniqueEntryValue({collection},{id},{site})'
+          -
+            handle: date
+            field:
+              type: date
+              required: true
+              default: now
+              validate:
+                - required
+          -
+            handle: author
+            field:
+              max_items: 1
+              type: users
+              listable: true
+              display: Author
+              default: current
+          -
+            handle: mobile_apps
+            field:
+              type: terms
+              taxonomies:
+                - mobile_apps
+              display: 'Mobile Apps'
+              mode: select
+          -
+            handle: business_finance
+            field:
+              type: terms
+              taxonomies:
+                - business_finance
+              display: 'Business and finance'
+              mode: select
+          -
+            handle: categories
+            field:
+              type: terms
+              taxonomies:
+                - categories
+              display: Categories
+              mode: select
+          -
+            handle: battle_royale_games
+            field:
+              type: terms
+              taxonomies:
+                - battle_royale_games
+              display: 'Battle Royale Games'
+              mode: select
+          -
+            handle: games
+            field:
+              type: terms
+              taxonomies:
+                - games
+              display: Games
+              mode: select

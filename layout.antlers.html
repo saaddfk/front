@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="{{ $site:short_locale }}" class="antialiased">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ meta_title ?? title ?? seo:site_name }}</title>
+    <meta name="description" content="{{ meta_description ?? intro | strip_tags | entities ?? description_text ?? excerpt ?? seo:site_description }}">
+
+    {{ if seo_noindex }}
+        <meta name="robots" content="noindex,nofollow">
+    {{ /if }}
+
+    {{ if is_homepage }}
+        <link rel="canonical" href="{{ config:app:url }}" />
+    {{ else }}
+        <link rel="canonical" href="{{ config:app:url }}{{ url }}" />
+    {{ /if }}
+
+    {{ partial:schema }}
+
+    {{ vite src="resources/js/app.js|resources/css/app.css" }}
+    
+
+    {{ partial:personality }}
+
+    <!-- Preload Inter and Lexend fonts instead of Roboto -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lexend:wght@400;500;600;700&display=swap" as="style">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lexend:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
+    <noscript>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lexend:wght@400;500;600;700&display=swap">
+    </noscript>
+    
+    <!-- Preload font files -->
+    <link rel="preload" href="https://fonts.gstatic.com/s/inter/v12/UcC73FwrK3iLTeHuS_fvQtMwCp50KnMa1ZL7.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+    <link rel="preload" href="https://fonts.gstatic.com/s/lexend/v17/wlpwgwvFAVdoq2_v-6QU82RHaBBX.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+
+    <meta property="og:title" content="{{ meta_title ?? title ?? seo:site_name }}">
+    <meta property="og:description" content="{{ meta_description ?? intro | strip_tags | entities ?? description_text ?? excerpt ?? seo:site_description }}">
+    <meta property="og:type" content="{{ is_homepage ? 'website' : 'article' }}">
+    <meta property="og:url" content="{{ url }}">
+    <meta property="og:site_name" content="{{ seo:site_name }}">
+    {{ if og_image }}
+    <meta property="og:image" content="{{ glide:og_image width='1200' height='630' fit='crop_focal' }}">
+    {{ elseif hero_image }}
+    <meta property="og:image" content="{{ glide:hero_image width='1200' height='630' fit='crop_focal' }}">
+    {{ elseif seo:default_og_image }}
+    <meta property="og:image" content="{{ glide:seo:default_og_image width='1200' height='630' fit='crop_focal' }}">
+    {{ /if }}
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ meta_title ?? title ?? seo:site_name }}">
+    <meta name="twitter:description" content="{{ meta_description ?? intro | strip_tags | entities ?? description_text ?? excerpt ?? seo:site_description }}">
+    {{ if og_image }}
+    <meta name="twitter:image" content="{{ glide:og_image width='1200' height='630' fit='crop_focal' }}">
+    {{ elseif hero_image }}
+    <meta name="twitter:image" content="{{ glide:hero_image width='1200' height='630' fit='crop_focal' }}">
+    {{ elseif seo:default_twitter_image }}
+    <meta name="twitter:image" content="{{ glide:seo:default_twitter_image width='1200' height='630' fit='crop_focal' }}">
+    {{ /if }}
+    <meta name="twitter:url" content="{{ url }}">
+    
+    <!-- Dark mode script -->
+    <script>
+        // Check for saved theme preference or respect OS setting
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 font-sans leading-normal transition-colors duration-400 personality-{{ $settings:personality }}">
+    {{ partial:components/header }}
+    <main class="py-12 lg:py-20">
+        {{ template_content }}
+    </main>
+    {{ partial:footer }}
+    {{ partial:extras }}
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const lcpImage = document.querySelector('.lcp-target img');
+        
+        if (lcpImage && !lcpImage.complete) {
+            const tempImg = new Image();
+            tempImg.src = lcpImage.src;
+            tempImg.srcset = lcpImage.srcset;
+            tempImg.sizes = lcpImage.sizes;
+        }
+        
+        // Theme toggle functionality
+        const themeToggle = document.querySelector('#theme-toggle');
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                // Toggle dark mode
+                document.documentElement.classList.toggle('dark');
+                
+                // Update localStorage
+                if (document.documentElement.classList.contains('dark')) {
+                    localStorage.theme = 'dark';
+                } else {
+                    localStorage.theme = 'light';
+                }
+            });
+        }
+    });
+    </script>
+</body>
+</html>

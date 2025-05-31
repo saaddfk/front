@@ -1,0 +1,142 @@
+<article class="max-w-6xl mx-auto px-3">
+    {{# Enhanced LCP preload with AVIF support #}}
+    {{ if $first }}
+    <link rel="preload" 
+          as="image" 
+          href="{{ glide:hero_image width='736' height='285' fit='crop_focal' format='avif' quality='80' }}"
+          imagesrcset="
+            {{ glide:hero_image width='400' format='avif' quality='80' }} 400w,
+            {{ glide:hero_image width='736' format='avif' quality='80' }} 736w,
+            {{ glide:hero_image width='1000' format='avif' quality='80' }} 1000w
+          "
+          imagesizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw">
+    {{ /if }}
+
+    <header class="mx-auto max-w-2xl text-center py-12">
+        <h1 class="text-4xl md:text-5xl font-heading font-bold mb-3 bg-gradient-to-r from-purple-600 to-indigo-500 bg-clip-text text-transparent dark:from-purple-500 dark:to-indigo-500">
+            eBlog.News
+        </h1>
+        <p class="text-lg text-gray-600 dark:text-gray-300 md:text-xl mb-8">Your Hub for Trending Topics and Breaking News!</p>
+    </header>
+
+    {{ collection:blog as="posts" paginate="12" sort="date:desc" }}
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+            {{ posts }}
+                <a href="{{ url }}" 
+                   class="block bg-white dark:bg-gray-800 shadow-md hover:shadow-xl dark:shadow-gray-900/30 rounded-xl overflow-hidden transition-all duration-300 relative group animate-fade-in"
+                   aria-label="Read {{ title }}"
+                   {{ if !$first }}data-aos="fade-up" data-aos-delay="{{ $index * 50 }}"{{ /if }}>
+                    
+                    {{ if hero_image }}
+                    <div class="relative overflow-hidden aspect-[3/2]">
+                        <picture>
+                            <!-- AVIF first -->
+                            <source 
+                                type="image/avif"
+                                srcset="
+                                    {{ glide:hero_image width='400' format='avif' quality='80' }} 400w,
+                                    {{ glide:hero_image width='736' format='avif' quality='80' }} 736w,
+                                    {{ glide:hero_image width='1000' format='avif' quality='80' }} 1000w
+                                "
+                                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw">
+                            
+                            <!-- WebP fallback -->
+                            <source 
+                                type="image/webp"
+                                srcset="
+                                    {{ glide:hero_image width='400' format='webp' quality='80' }} 400w,
+                                    {{ glide:hero_image width='736' format='webp' quality='80' }} 736w,
+                                    {{ glide:hero_image width='1000' format='webp' quality='80' }} 1000w
+                                "
+                                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw">
+
+                            <!-- JPEG final fallback -->
+                            <img class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                alt="{{ hero_image:alt }}"
+                                loading="{{ $first ? 'eager' : 'lazy' }}"
+                                decoding="async"
+                                src="{{ glide:hero_image width='736' format='jpg' quality='80' }}"
+                                srcset="
+                                    {{ glide:hero_image width='400' format='jpg' quality='80' }} 400w,
+                                    {{ glide:hero_image width='736' format='jpg' quality='80' }} 736w,
+                                    {{ glide:hero_image width='1000' format='jpg' quality='80' }} 1000w
+                                "
+                                width="736"
+                                height="490">
+                        </picture>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                    </div>
+                    {{ /if }}
+
+                    <div class="p-6 space-y-3">
+                        <h2 class="text-xl font-heading font-bold text-gray-800 dark:text-gray-100 line-clamp-2">{{ title }}</h2>
+                        <p class="text-gray-600 dark:text-gray-300 text-sm line-clamp-3">{{ meta_description }}</p>
+                        <div class="flex items-center justify-between mt-4">
+                            <time class="text-xs text-gray-500 dark:text-gray-400" datetime="{{ date iso_format='Y-MM-DD' }}">
+                                {{ date format="M j, Y" }}
+                            </time>
+                            <span class="text-purple-600 dark:text-purple-500 text-sm font-medium flex items-center group-hover:translate-x-1 transition-transform duration-300">
+                                Read More
+                                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                </svg>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            {{ /posts }}
+        </section>
+
+        {{ paginate }}
+            {{ if $prev_page || $next_page }}
+                <nav class="flex justify-center gap-4 py-12" aria-label="Pagination">
+                    {{ if $prev_page }}
+                        <a href="{{ $prev_page }}" 
+                           class="px-6 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 shadow-md hover:shadow-purple-500/30 rounded-lg transition-all flex items-center gap-2">
+                            ← Newer
+                        </a>
+                    {{ /if }}
+                    {{ if $next_page }}
+                        <a href="{{ $next_page }}" 
+                           class="px-6 py-2 bg-gradient-to-r from-purple-600 to-indigo-500 hover:shadow-purple-500/30 text-white shadow-md hover:shadow-lg rounded-lg transition-all flex items-center gap-2">
+                            Older →
+                        </a>
+                    {{ /if }}
+                </nav>
+            {{ /if }}
+        {{ /paginate }}
+    {{ /collection:blog }}
+</article>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Enhanced lazy loading with intersection observer
+        if ('loading' in HTMLImageElement.prototype) {
+            const lazyImages = document.querySelectorAll('img[loading="lazy"]');
+            lazyImages.forEach(img => {
+                img.classList.add('opacity-0');
+                img.addEventListener('load', () => {
+                    img.classList.add('animate-fade-in');
+                    img.classList.remove('opacity-0');
+                }, { once: true });
+            });
+        } else {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.src = img.dataset.src;
+                        img.classList.add('animate-fade-in');
+                        observer.unobserve(img);
+                    }
+                });
+            });
+
+            document.querySelectorAll('img[loading="lazy"]').forEach(img => {
+                img.dataset.src = img.src;
+                img.src = '';
+                observer.observe(img);
+            });
+        }
+    });
+</script>

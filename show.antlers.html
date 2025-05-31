@@ -1,0 +1,262 @@
+<main class="container mx-auto px-4 max-w-4xl py-8">
+    <!-- Top Ad Unit -->
+    {{ partial:ads/top-banner }}
+    
+    <!-- Hero Image Section -->
+    <article class="bg-white border border-gray-200 rounded-xl shadow-sm p-6 mb-8" role="article">
+        {{ if hero_image }}
+        <link rel="preload" as="image" href="{{ glide:hero_image width='1472' height='570' fit='crop_focal' }}">
+        <div class="single-post-hero-image relative rounded-lg overflow-hidden mb-6">
+            <img class="w-full h-64 md:h-96 object-cover"
+                 alt="{{ hero_image:alt }}"
+                 loading="lazy"
+                 srcset="{{ glide:hero_image width='300' height='200' fit='crop_focal' }} 300w,
+                        {{ glide:hero_image width='768' height='400' fit='crop_focal' }} 768w,
+                        {{ glide:hero_image width='1472' height='570' fit='crop_focal' }} 1472w"
+                 sizes="(max-width: 767px) 300px, (max-width: 1472px) 768px, 1472w"
+                 src="{{ glide:hero_image width='1472' height='570' fit='crop_focal' }}">
+        </div>
+        {{ /if }}
+    
+        <!-- Content Section -->
+        <section class="content single-post-content">
+            <div class="space-y-6">
+                {{ main_content }}
+                {{ if type == "text" }}
+                <div class="prose prose-lg prose-gray max-w-none">
+                    {{ partial:blog/_components/text-block :text="text" }}
+                </div>
+                {{ elseif type == "code_block" }}
+                <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                    <pre class="text-sm lg:text-base bg-gray-900 text-gray-100 p-4 rounded-md overflow-x-auto">
+                        {{ partial:blog/_components/code-block :code="code" :mode="mode" }}
+                    </pre>
+                </div>
+                {{ elseif type == "image" }}
+                <div class="rounded-lg overflow-hidden border border-gray-200">
+                    <figure class="mb-4">
+                        <img class="rounded-lg w-full h-auto object-cover"
+                             alt="{{ image:alt }}"
+                             src="{{ glide:image width='1024' height='auto' fit='crop_focal' }}"
+                             loading="lazy">
+                        <figcaption class="text-sm text-gray-600 mt-2 px-4 pb-2">{{ caption }}</figcaption>
+                    </figure>
+                </div>
+                {{ /if }}
+                {{ /main_content }}
+            </div>
+        </section>
+
+        <!-- In-Content Ad Unit -->
+        <div class="my-8">
+            {{ partial:ads/in-content }}
+        </div>
+
+        <!-- Product Details Section -->
+        <section class="content single-post-content mt-12 pt-8 border-t border-gray-200">
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Product Image Gallery -->
+                <div class="space-y-4">
+                    {{ if product_images }}
+                        <div class="overflow-hidden rounded-lg shadow-md border border-gray-200">
+                            {{ product_images }}
+                                <img 
+                                    src="{{ glide:url width='800' height='600' fit='crop_focal' }}" 
+                                    alt="{{ alt ?? product_name }}" 
+                                    class="w-full h-96 object-cover"
+                                    loading="lazy"
+                                >
+                            {{ /product_images }}
+                        </div>
+
+                        {{ if product_images | count > 1 }}
+                            <div class="grid grid-cols-4 gap-2">
+                                {{ product_images }}
+                                    <img 
+                                        src="{{ glide:url width='200' height='200' fit='crop_focal' }}" 
+                                        alt="{{ alt ?? product_name }}" 
+                                        class="w-full h-20 object-cover rounded border border-gray-200 cursor-pointer hover:opacity-80 hover:border-blue-300 transition-all duration-200"
+                                        loading="lazy"
+                                    >
+                                {{ /product_images }}
+                            </div>
+                        {{ /if }}
+                    {{ /if }}
+                </div>
+
+                <!-- Product Details -->
+                <div>
+                    <div class="mb-6">
+                        <h1 class="text-3xl font-bold text-gray-900 mb-3 leading-tight">
+                            {{ product_name }}
+                        </h1>
+                        
+                        {{ if brand }}
+                            <div class="text-sm text-gray-600 mb-4 bg-gray-50 px-3 py-1 rounded-full inline-block">
+                                Brand: <span class="font-medium">{{ brand }}</span>
+                            </div>
+                        {{ /if }}
+
+                        <div class="flex items-center mb-6 gap-4">
+                            <span class="text-3xl font-bold text-blue-600 bg-blue-50 px-4 py-2 rounded-lg">
+                                {{ price }}
+                            </span>
+                            
+                            {{ if purchase_link }}
+                                <a 
+                                    href="{{ purchase_link }}" 
+                                    target="_blank" 
+                                    class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-sm"
+                                    rel="noopener noreferrer"
+                                >
+                                    Get Now
+                                </a>
+                            {{ /if }}
+                        </div>
+                    </div>
+
+                    <!-- Product Description -->
+                    <div class="prose prose-gray max-w-none mb-6 text-gray-700">
+                        {{ product_description }}
+                    </div>
+
+                    <!-- Features -->
+                    {{ if features }}
+                        <div class="bg-gray-50 border border-gray-200 p-6 rounded-lg">
+                            <h3 class="text-lg font-semibold mb-4 text-gray-900 flex items-center">
+                                <svg class="w-5 h-5 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                                </svg>
+                                Key Features
+                            </h3>
+                            <ul class="space-y-3">
+                                {{ features }}
+                                    <li class="flex items-start">
+                                        <svg class="w-5 h-5 text-green-600 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                        </svg>
+                                        <span class="text-gray-700">{{ feature }}</span>
+                                    </li>
+                                {{ /features }}
+                            </ul>
+                        </div>
+                    {{ /if }}
+
+                    <!-- Sidebar Ad Unit -->
+                    <div class="mt-6">
+                        {{ partial:ads/sidebar }}
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Author & Download Sections -->
+        <div class="mt-12 space-y-8">
+            {{ partial:blog/_components/author-info }}
+
+            {{ if show_download_button }}
+            <div class="bg-blue-50 border border-blue-200 p-6 rounded-lg">
+                <div class="flex flex-col md:flex-row items-start gap-6">
+                    {{ if download_image }}
+                    <img src="{{ glide:download_image[0] width="400" }}" 
+                         class="w-32 h-32 object-contain rounded-lg border border-gray-200"
+                         alt="Download icon"
+                         loading="lazy">
+                    {{ /if }}
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold mb-4 text-gray-900 flex items-center">
+                            <svg class="w-6 h-6 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                            </svg>
+                            Download Details
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mb-4">
+                            <div class="space-y-2">
+                                <p class="text-gray-600 bg-white p-2 rounded border">
+                                    <span class="font-medium text-gray-900">File Name:</span><br>
+                                    {{ download_details:0:filename }}
+                                </p>
+                                <p class="text-gray-600 bg-white p-2 rounded border">
+                                    <span class="font-medium text-gray-900">Size:</span><br>
+                                    {{ download_details:0:file_size }}
+                                </p>
+                            </div>
+                            <div class="space-y-2">
+                                <p class="text-gray-600 bg-white p-2 rounded border">
+                                    <span class="font-medium text-gray-900">Version:</span><br>
+                                    {{ download_details:0:version }}
+                                </p>
+                                <p class="text-gray-600 bg-white p-2 rounded border">
+                                    <span class="font-medium text-gray-900">OS:</span><br>
+                                    {{ download_details:0:operating_system }}
+                                </p>
+                            </div>
+                        </div>
+                        <a href="{{ download_url }}" 
+                           class="inline-flex items-center bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 shadow-sm">
+                            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                            </svg>
+                            Download Now ({{ countdown_time }}s)
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {{ /if }}
+
+            <!-- Pre-Footer Ad Unit -->
+            <div class="my-8">
+                {{ partial:ads/pre-footer }}
+            </div>
+        </div>
+
+        <!-- Taxonomies -->
+        <div class="border-t border-gray-200 pt-6 mt-8 space-y-4">
+            {{ if categories }}
+            <div class="space-y-2">
+                <span class="font-semibold text-gray-900 block">Categories:</span>
+                <div class="flex flex-wrap gap-2">
+                    {{ categories }}
+                    <a href="{{ url }}" class="px-4 py-2 bg-gray-100 border border-gray-200 rounded-full text-sm text-gray-700 hover:bg-gray-200 hover:border-gray-300 transition-colors duration-200">
+                        {{ title }}
+                    </a>
+                    {{ /categories }}
+                </div>
+            </div>
+            {{ /if }}
+
+            {{ if games || battle_royale_games }}
+            <div class="space-y-2">
+                <span class="font-semibold text-gray-900 block">Game Tags:</span>
+                <div class="flex flex-wrap gap-2">
+                    {{ games }}
+                    <a href="{{ url }}" class="px-4 py-2 bg-blue-100 border border-blue-200 rounded-full text-sm text-blue-700 hover:bg-blue-200 hover:border-blue-300 transition-colors duration-200">
+                        🎮 {{ title }}
+                    </a>
+                    {{ /games }}
+                    {{ battle_royale_games }}
+                    <a href="{{ url }}" class="px-4 py-2 bg-red-100 border border-red-200 rounded-full text-sm text-red-700 hover:bg-red-200 hover:border-red-300 transition-colors duration-200">
+                        ⚔️ {{ title }} (BR)
+                    </a>
+                    {{ /battle_royale_games }}
+                </div>
+            </div>
+            {{ /if }}
+        </div>
+
+        <!-- Admin Edit -->
+        {{ if user:is_admin }}
+        <div class="mt-6 border-t border-gray-200 pt-4">
+            <a href="{{ edit_url }}" class="inline-flex items-center text-blue-600 hover:text-blue-800 text-sm font-medium bg-blue-50 px-3 py-1 rounded-lg border border-blue-200 hover:bg-blue-100 transition-colors duration-200">
+                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
+                </svg>
+                Edit Post (Admin Only)
+            </a>
+        </div>
+        {{ /if }}
+    </article>
+
+    <!-- Bottom Ad Unit -->
+    {{ partial:ads/bottom-banner }}
+</main>
